@@ -5,6 +5,11 @@ use App\Domains\Dispatch\Actions\CreateReceiptAction;
 use App\Domains\Feedback\Actions\CreateFeedbackAction;
 use App\Domains\Ledger\Services\LedgerService;
 use App\Domains\Security\Services\AuthSecurityService;
+use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\MbgMenuController;
+use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\SchoolController;
+use App\Http\Controllers\Api\SppgProviderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -67,6 +72,17 @@ Route::middleware([
             'data' => $request->user()->only(['id', 'name', 'email', 'role']),
         ]);
     })->name('auth.me');
+
+    // --- CRUD: Master Data ---
+    Route::apiResource('admins', AdminController::class);
+    Route::apiResource('sppg-providers', SppgProviderController::class)->parameters(['sppg-providers' => 'sppg_provider']);
+    Route::apiResource('schools', SchoolController::class);
+    Route::apiResource('mbg-menus', MbgMenuController::class)->parameters(['mbg-menus' => 'mbg_menu']);
+
+    // --- Read-only: Transactional Reports ---
+    Route::get('/reports/dispatches', [ReportController::class, 'dispatches'])->name('reports.dispatches');
+    Route::get('/reports/receipts', [ReportController::class, 'receipts'])->name('reports.receipts');
+    Route::get('/reports/feedbacks', [ReportController::class, 'feedbacks'])->name('reports.feedbacks');
 
     // SPPG Provider: Daily Dispatch reporting
     Route::middleware('geofencing:sppg,sppg_provider_id')
