@@ -112,8 +112,10 @@ final class AuthSecurityService
         RateLimiter::clear($ipKey);
         RateLimiter::clear($emailKey);
 
-        // Regenerate session to prevent fixation
-        $request->session()->regenerate();
+        // Regenerate session to prevent fixation (only if session is available)
+        if ($request->hasSession()) {
+            $request->session()->regenerate();
+        }
 
         // Create Sanctum token with role-scoped abilities
         $abilities = $this->getAbilitiesForRole($admin->role);
@@ -148,9 +150,11 @@ final class AuthSecurityService
         // Revoke the token used for this request
         $admin->currentAccessToken()->delete();
 
-        // Invalidate session
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        // Invalidate session (only if available)
+        if ($request->hasSession()) {
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
 
         Log::info('Admin logout', [
             'admin_id' => $admin->id,

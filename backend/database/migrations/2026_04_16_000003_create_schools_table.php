@@ -28,8 +28,8 @@ return new class extends Migration
             $table->foreign('sppg_provider_id')->references('id')->on('sppg_providers')->nullOnDelete();
         });
 
-        DB::statement('ALTER TABLE schools ADD COLUMN coordinate POINT NOT NULL SRID 4326 AFTER province');
-        DB::statement('CREATE SPATIAL INDEX idx_schools_coordinate ON schools (coordinate)');
+        // Add spatial POINT column — nullable for seeding compatibility
+        DB::statement('ALTER TABLE schools ADD COLUMN coordinate POINT NULL AFTER province');
     }
 
     public function down(): void

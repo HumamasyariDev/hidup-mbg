@@ -59,7 +59,7 @@ final class School extends Model
     public static function setCoordinate(string $id, float $latitude, float $longitude): void
     {
         DB::statement(
-            'UPDATE schools SET coordinate = ST_SRID(POINT(?, ?), 4326) WHERE id = ?',
+            "UPDATE schools SET coordinate = ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')')) WHERE id = ?",
             [$longitude, $latitude, $id]
         );
     }
@@ -70,8 +70,8 @@ final class School extends Model
     public static function isWithinGeofence(string $schoolId, float $latitude, float $longitude): bool
     {
         $result = DB::selectOne(
-            'SELECT ST_Distance_Sphere(coordinate, ST_SRID(POINT(?, ?), 4326)) AS distance_m, geofence_radius_meters
-             FROM schools WHERE id = ?',
+            "SELECT ST_Distance_Sphere(coordinate, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')'))) AS distance_m, geofence_radius_meters
+             FROM schools WHERE id = ?",
             [$longitude, $latitude, $schoolId]
         );
 
@@ -89,7 +89,7 @@ final class School extends Model
         int $meters = 100
     ): Builder {
         return $query->whereRaw(
-            'ST_Distance_Sphere(coordinate, ST_SRID(POINT(?, ?), 4326)) <= ?',
+            "ST_Distance_Sphere(coordinate, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')'))) <= ?",
             [$longitude, $latitude, $meters]
         );
     }

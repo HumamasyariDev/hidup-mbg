@@ -58,7 +58,7 @@ final class SppgProvider extends Model
     public static function setCoordinate(string $id, float $latitude, float $longitude): void
     {
         DB::statement(
-            'UPDATE sppg_providers SET coordinate = ST_SRID(POINT(?, ?), 4326) WHERE id = ?',
+            "UPDATE sppg_providers SET coordinate = ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')')) WHERE id = ?",
             [$longitude, $latitude, $id]
         );
     }
@@ -73,7 +73,7 @@ final class SppgProvider extends Model
         int $meters = 100
     ): Builder {
         return $query->whereRaw(
-            'ST_Distance_Sphere(coordinate, ST_SRID(POINT(?, ?), 4326)) <= ?',
+            "ST_Distance_Sphere(coordinate, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')'))) <= ?",
             [$longitude, $latitude, $meters]
         );
     }

@@ -55,7 +55,7 @@ final class DeviceFingerprintMiddleware
     {
         $fingerprint = $request->header('X-Device-Fingerprint');
 
-        if (!$fingerprint || strlen($fingerprint) !== 64) {
+        if (!$fingerprint || strlen($fingerprint) < 8) {
             return response()->json([
                 'error' => 'device_fingerprint_required',
                 'message' => 'Identifikasi perangkat diperlukan (X-Device-Fingerprint).',

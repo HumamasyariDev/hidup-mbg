@@ -14,11 +14,15 @@ final class SchoolSeeder extends Seeder
     {
         $providers = SppgProvider::all();
 
-        // Each SPPG provider serves 3 schools
         $providers->each(function (SppgProvider $provider): void {
-            School::factory()
-                ->count(3)
-                ->create(['sppg_provider_id' => $provider->id]);
+            for ($i = 0; $i < 3; $i++) {
+                $school = School::factory()->create(['sppg_provider_id' => $provider->id]);
+
+                // Random coordinate near Indonesia (-6 to -8 lat, 106 to 113 lng)
+                $lat = fake()->latitude(-8.0, -6.0);
+                $lng = fake()->longitude(106.0, 113.0);
+                School::setCoordinate($school->id, $lat, $lng);
+            }
         });
     }
 }

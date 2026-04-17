@@ -23,9 +23,8 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // Add spatial POINT column via raw SQL for full compatibility
-        DB::statement('ALTER TABLE sppg_providers ADD COLUMN coordinate POINT NOT NULL SRID 4326 AFTER province');
-        DB::statement('CREATE SPATIAL INDEX idx_sppg_providers_coordinate ON sppg_providers (coordinate)');
+        // Add spatial POINT column — nullable for seeding compatibility
+        DB::statement('ALTER TABLE sppg_providers ADD COLUMN coordinate POINT NULL AFTER province');
     }
 
     public function down(): void

@@ -30,7 +30,7 @@ final class SchoolReceiptFactory extends Factory
             'quantity_received'    => $received,
             'quantity_distributed' => (int) ($received * fake()->randomFloat(2, 0.85, 1.0)),
             'quantity_damaged'     => fake()->numberBetween(0, 5),
-            'condition'            => fake()->randomElement(['good', 'acceptable', 'poor']),
+            'condition'            => fake()->randomElement(['good', 'partial_damage', 'major_damage']),
             'notes'                => fake()->optional(0.3)->sentence(),
             'photo_proof_path'     => null,
             'reported_by_admin_id' => Admin::factory(),
